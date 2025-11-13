@@ -1,0 +1,221 @@
+<div class="container">
+  <h1>{{ labels.titulo }}</h1>
+
+  <div class="form-container">
+    <h2>{{ isEditando ? labels.tituloFormularioEditar : labels.tituloFormularioAdicionar }}</h2>
+
+    <form (ngSubmit)="salvar()" #form="ngForm">
+      <div class="form-group">
+        <label for="nome">{{ labels.labelNome }}</label>
+        <input
+          type="text"
+          id="nome"
+          name="nome"
+          [(ngModel)]="registroAtual.nome"
+          required
+        />
+      </div>
+
+      <div class="form-group">
+        <label for="sobrenome">{{ labels.labelSobrenome }}</label>
+        <input
+          type="text"
+          id="sobrenome"
+          name="sobrenome"
+          [(ngModel)]="registroAtual.sobrenome"
+          required
+        />
+      </div>
+
+      <div class="form-group">
+        <label for="dataDeNascimento">{{ labels.labelDataNascimento }}</label>
+        <input
+          type="date"
+          id="dataDeNascimento"
+          name="dataDeNascimento"
+          [(ngModel)]="registroAtual.dataDeNascimento"
+          [max]="dataMaxima"
+          required
+        />
+      </div>
+
+      <div class="form-group">
+        <label for="genero">{{ labels.labelGenero }}</label>
+        <select
+          id="genero"
+          name="genero"
+          [(ngModel)]="registroAtual.genero"
+          required
+        >
+          <option value="">Selecione...</option>
+          <option value="Masculino">Masculino</option>
+          <option value="Feminino">Feminino</option>
+          <option value="Outro">Outro</option>
+        </select>
+      </div>
+
+      <div class="form-group">
+        <label for="cpf">{{ labels.labelCpf }}</label>
+        <input
+          type="text"
+          id="cpf"
+          name="cpf"
+          [(ngModel)]="registroAtual.cpf"
+          (blur)="verificarCPF()"
+          placeholder="000.000.000-00"
+          maxlength="14"
+          [disabled]="isEditando"
+        />
+      </div>
+
+      <div class="form-group">
+        <label for="rg">{{ labels.labelRg }}</label>
+        <input
+          type="text"
+          id="rg"
+          name="rg"
+          [(ngModel)]="registroAtual.rg"
+          (blur)="verificarRG()"
+          maxlength="12"
+          required
+          [disabled]="isEditando"
+        />
+      </div>
+
+      <div class="form-group">
+        <label for="rguf">{{ labels.labelRgUf }}</label>
+        <select
+          id="rguf"
+          name="rguf"
+          [(ngModel)]="registroAtual.rguf"
+          required
+          [disabled]="isEditando"
+        >
+          <option value="">Selecione...</option>
+          <option value="AC">AC - Acre</option>
+          <option value="AL">AL - Alagoas</option>
+          <option value="AP">AP - Amapá</option>
+          <option value="AM">AM - Amazonas</option>
+          <option value="BA">BA - Bahia</option>
+          <option value="CE">CE - Ceará</option>
+          <option value="DF">DF - Distrito Federal</option>
+          <option value="ES">ES - Espírito Santo</option>
+          <option value="GO">GO - Goiás</option>
+          <option value="MA">MA - Maranhão</option>
+          <option value="MT">MT - Mato Grosso</option>
+          <option value="MS">MS - Mato Grosso do Sul</option>
+          <option value="MG">MG - Minas Gerais</option>
+          <option value="PA">PA - Pará</option>
+          <option value="PB">PB - Paraíba</option>
+          <option value="PR">PR - Paraná</option>
+          <option value="PE">PE - Pernambuco</option>
+          <option value="PI">PI - Piauí</option>
+          <option value="RJ">RJ - Rio de Janeiro</option>
+          <option value="RN">RN - Rio Grande do Norte</option>
+          <option value="RS">RS - Rio Grande do Sul</option>
+          <option value="RO">RO - Rondônia</option>
+          <option value="RR">RR - Roraima</option>
+          <option value="SC">SC - Santa Catarina</option>
+          <option value="SP">SP - São Paulo</option>
+          <option value="SE">SE - Sergipe</option>
+          <option value="TO">TO - Tocantins</option>
+        </select>
+      </div>
+
+      <div class="form-group">
+        <label for="email">{{ labels.labelEmail }}</label>
+        <input
+          type="email"
+          id="email"
+          name="email"
+          [(ngModel)]="registroAtual.email"
+          required
+        />
+      </div>
+
+      <div class="form-group">
+        <label for="celular">{{ labels.labelCelular }}</label>
+        <input
+          type="tel"
+          id="celular"
+          name="celular"
+          [(ngModel)]="registroAtual.celular"
+          placeholder="(00) 00000-0000"
+        />
+      </div>
+
+      <div class="form-group">
+        <label for="telefoneFixo">{{ labels.labelTelefoneFixo }}</label>
+        <input
+          type="tel"
+          id="telefoneFixo"
+          name="telefoneFixo"
+          [(ngModel)]="registroAtual.telefoneFixo"
+          placeholder="(00) 0000-0000"
+        />
+      </div>
+
+      <div class="form-group">
+        <label for="convenio">{{ labels.labelConvenio }}</label>
+        <select
+          id="convenio"
+          name="convenio"
+          [(ngModel)]="registroAtual.convenio"
+          required
+        >
+          <option value="">Selecione...</option>
+          <option *ngFor="let conv of convenios" [value]="conv.id">
+            {{ conv.nome }}
+          </option>
+        </select>
+      </div>
+
+      <div class="form-buttons">
+        <button type="submit" [disabled]="!form.valid">
+          {{ isEditando ? labels.btnAtualizar : labels.btnSalvar }}
+        </button>
+
+        <button type="button" (click)="cancelar()" *ngIf="isEditando" class="btn-cancelar">
+          {{ labels.btnCancelar }}
+        </button>
+      </div>
+    </form>
+  </div>
+
+  <div class="table-container">
+    <h2>Lista de Pacientes</h2>
+
+    <div *ngIf="lista.length === 0" class="empty-message">
+      {{ labels.mensagemVazia }}
+    </div>
+
+    <table *ngIf="lista.length > 0">
+      <thead>
+        <tr>
+          <th>{{ labels.colunaNome }}</th>
+          <th>{{ labels.colunaSobrenome }}</th>
+          <th>{{ labels.colunaEmail }}</th>
+          <th>{{ labels.colunaConvenio }}</th>
+          <th>{{ labels.colunaAcoes }}</th>
+        </tr>
+      </thead>
+
+      <tbody>
+        <tr *ngFor="let item of lista">
+          <td>{{ item.nome }}</td>
+          <td>{{ item.sobrenome }}</td>
+          <td>{{ item.email }}</td>
+          <td>{{ item.convenio }}</td>
+          <td>
+            <button class="btn-editar" (click)="editar(item)">
+              {{ labels.btnEditar }}
+            </button>
+            <button class="btn-deletar" (click)="deletar(item.key)">
+              {{ labels.btnDeletar }}
+            </button>
+          </td>
+        </tr>
+      </tbody>
+    </table>
+  </div>
+</div>

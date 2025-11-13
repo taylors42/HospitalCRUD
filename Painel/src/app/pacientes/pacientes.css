@@ -1,0 +1,204 @@
+/* ============================================ */
+/* ESTILOS DO CRUD */
+/* ============================================ */
+/* 🎨 MUDE AS CORES AQUI! */
+/* ============================================ */
+
+/* ========================================== */
+/* CONTAINER E TITULOS */
+/* ========================================== */
+.container {
+  max-width: 1000px; /* ⬅️ Largura maxima da pagina */
+  margin: 0 auto;
+  padding: 20px;
+}
+
+h1 {
+  text-align: center;
+  color: #333; /* ⬅️ COR DO TITULO PRINCIPAL */
+  margin-bottom: 30px;
+  font-size: 32px; /* ⬅️ TAMANHO DO TITULO */
+}
+
+h2 {
+  color: #555; /* ⬅️ COR DOS SUBTITULOS */
+  margin-bottom: 20px;
+  font-size: 18px;
+}
+
+/* ========================================== */
+/* FORMULARIO */
+/* ========================================== */
+.form-container {
+  background-color: #f9f9f9; /* ⬅️ COR DE FUNDO DO FORMULARIO */
+  padding: 20px;
+  border-radius: 5px;
+  margin-bottom: 30px;
+}
+
+.form-group {
+  margin-bottom: 15px;
+}
+
+.form-group label {
+  display: block;
+  margin-bottom: 5px;
+  color: #555; /* ⬅️ COR DOS LABELS */
+  font-weight: bold;
+}
+
+.form-group input {
+  width: 100%;
+  padding: 10px;
+  border: 1px solid #ddd; /* ⬅️ COR DA BORDA DO INPUT */
+  border-radius: 4px;
+  font-size: 14px;
+  box-sizing: border-box;
+}
+
+.form-group input:focus {
+  outline: none;
+  border-color: #4caf50; /* ⬅️ COR DA BORDA QUANDO CLICA NO INPUT */
+}
+
+.form-buttons {
+  display: flex;
+  gap: 10px;
+  margin-top: 20px;
+}
+
+/* ========================================== */
+/* BOTOES */
+/* ========================================== */
+button {
+  padding: 10px 20px;
+  border: none;
+  border-radius: 4px;
+  cursor: pointer;
+  font-size: 14px;
+  transition: background-color 0.3s;
+}
+
+/* Botao SALVAR/ATUALIZAR (Verde) */
+button[type='submit'] {
+  background-color: #4caf50; /* ⬅️ COR DO BOTAO SALVAR */
+  color: white;
+}
+
+button[type='submit']:hover:not(:disabled) {
+  background-color: #45a049; /* ⬅️ COR AO PASSAR O MOUSE */
+}
+
+button[type='submit']:disabled {
+  background-color: #ccc; /* ⬅️ COR QUANDO DESABILITADO */
+  cursor: not-allowed;
+}
+
+/* Botao CANCELAR (Vermelho) */
+.btn-cancelar {
+  background-color: #f44336; /* ⬅️ COR DO BOTAO CANCELAR */
+  color: white;
+}
+
+.btn-cancelar:hover {
+  background-color: #da190b; /* ⬅️ COR AO PASSAR O MOUSE */
+}
+
+/* ========================================== */
+/* TABELA */
+/* ========================================== */
+.table-container {
+  margin-top: 30px;
+}
+
+.empty-message {
+  text-align: center;
+  padding: 20px;
+  color: #999; /* ⬅️ COR DA MENSAGEM "NENHUM REGISTRO" */
+  font-style: italic;
+}
+
+table {
+  width: 100%;
+  border-collapse: collapse;
+  background-color: white;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+}
+
+/* Cabecalho da Tabela (Verde) */
+thead {
+  background-color: #4caf50; /* ⬅️ COR DO CABECALHO DA TABELA */
+  color: white;
+}
+
+th,
+td {
+  padding: 12px;
+  text-align: left;
+  border-bottom: 1px solid #ddd;
+}
+
+/* Linha ao passar o mouse */
+tbody tr:hover {
+  background-color: #f5f5f5; /* ⬅️ COR AO PASSAR O MOUSE NA LINHA */
+}
+
+/* Botao EDITAR (Azul) */
+.btn-editar {
+  background-color: #2196f3; /* ⬅️ COR DO BOTAO EDITAR */
+  color: white;
+  margin-right: 5px;
+  padding: 6px 12px;
+}
+
+.btn-editar:hover {
+  background-color: #0b7dda; /* ⬅️ COR AO PASSAR O MOUSE */
+}
+
+/* Botao DELETAR (Vermelho) */
+.btn-deletar {
+  background-color: #f44336; /* ⬅️ COR DO BOTAO DELETAR */
+  color: white;
+  padding: 6px 12px;
+}
+
+.btn-deletar:hover {
+  background-color: #da190b; /* ⬅️ COR AO PASSAR O MOUSE */
+}
+
+/* ========================================== */
+/* RESPONSIVO (CELULAR) */
+/* ========================================== */
+@media (max-width: 768px) {
+  .container {
+    padding: 10px;
+  }
+
+  table {
+    font-size: 12px;
+  }
+
+  button {
+    padding: 8px 12px;
+    font-size: 12px;
+  }
+}
+
+/* ========================================== */
+/* PALETA DE CORES SUGERIDAS */
+/* ========================================== */
+/*
+CORES BONITAS PARA USAR:
+
+Verde: #4caf50 (atual)
+Azul: #2196f3 (atual)
+Vermelho: #f44336 (atual)
+Roxo: #9c27b0
+Laranja: #ff9800
+Rosa: #e91e63
+Cinza: #607d8b
+Verde Escuro: #1b5e20
+Azul Escuro: #0d47a1
+
+Para mudar, substitua os valores #4caf50, etc.
+*/
