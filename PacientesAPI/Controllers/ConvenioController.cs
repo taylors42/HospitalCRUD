@@ -1,21 +1,12 @@
-using BancoDeDados;
 using Microsoft.AspNetCore.Mvc;
-using Microsoft.EntityFrameworkCore;
+using PacientesAPI.Services;
 
 namespace PacientesAPI.Controllers;
 
 [ApiController]
 [Route("[controller]")]
-public class ConveniosController(PacientesDbContext contexto) : ControllerBase
+public class ConveniosController(IConvenioService convenioService) : ControllerBase
 {
     [HttpGet]
-    public IActionResult Get()
-    {
-        var listaConvenios = contexto
-            .Convenios
-            .AsNoTracking()
-            .ToList();
-
-        return StatusCode(200, listaConvenios);
-    }
+    public IActionResult Get() => StatusCode(200, convenioService.ListarConvenios());
 }

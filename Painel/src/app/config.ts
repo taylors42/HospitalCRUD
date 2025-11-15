@@ -11,7 +11,8 @@ export interface Entidade {
   celular?: string;
   telefoneFixo?: string;
   convenio: string;
-  validadeCarteirinha?: string;
+  numeroCarteirinha: string;
+  validadeCarteirinha: string;
 }
 
 export interface CreatePacienteDTO {
@@ -26,6 +27,8 @@ export interface CreatePacienteDTO {
   celular?: string;
   telefoneFixo?: string;
   convenio: string;
+  numeroCarteirinha: string;
+  validadeCarteirinha: string;
 }
 
 export interface UpdatePacienteDTO {
@@ -37,6 +40,8 @@ export interface UpdatePacienteDTO {
   celular?: string;
   telefoneFixo?: string;
   convenio?: string;
+  numeroCarteirinha?: string;
+  validadeCarteirinha?: string;
   // RG, RGUF e CPF não podem ser alterados após o cadastro
 }
 
@@ -72,11 +77,15 @@ export const LABELS = {
   labelCelular: 'Celular',
   labelTelefoneFixo: 'Telefone Fixo',
   labelConvenio: 'Convênio',
+  labelNumeroCarteirinha: 'Número da Carteirinha',
+  labelValidadeCarteirinha: 'Validade da Carteirinha (MM/AAAA)',
   colunaId: 'ID',
   colunaNome: 'Nome',
   colunaSobrenome: 'Sobrenome',
   colunaEmail: 'Email',
   colunaConvenio: 'Convênio',
+  colunaNumeroCarteirinha: 'Nº Carteirinha',
+  colunaValidadeCarteirinha: 'Validade',
   colunaAcoes: 'Ações',
 };
 

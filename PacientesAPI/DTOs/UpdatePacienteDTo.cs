@@ -12,4 +12,6 @@ public sealed class UpdatePacienteDTo
     public string? Celular { get; set; }
     public string? TelefoneFixo { get; set; }
     public string? Convenio { get; set; }
+    public string? NumeroCarteirinha { get; set; }
+    public DateTime? ValidadeCarteirinha { get; set; }
 }

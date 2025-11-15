@@ -63,6 +63,7 @@
           [(ngModel)]="registroAtual.cpf"
           (blur)="verificarCPF()"
           placeholder="000.000.000-00"
+          mask="000.000.000-00"
           maxlength="14"
           [disabled]="isEditando"
         />
@@ -140,6 +141,7 @@
           id="celular"
           name="celular"
           [(ngModel)]="registroAtual.celular"
+          mask="(00) 00000-0000"
           placeholder="(00) 00000-0000"
         />
       </div>
@@ -151,6 +153,7 @@
           id="telefoneFixo"
           name="telefoneFixo"
           [(ngModel)]="registroAtual.telefoneFixo"
+          mask="(00) 0000-0000"
           placeholder="(00) 0000-0000"
         />
       </div>
@@ -168,6 +171,30 @@
             {{ conv.nome }}
           </option>
         </select>
+      </div>
+
+      <div class="form-group">
+        <label for="numeroCarteirinha">{{ labels.labelNumeroCarteirinha }}</label>
+        <input
+          type="text"
+          id="numeroCarteirinha"
+          name="numeroCarteirinha"
+          [(ngModel)]="registroAtual.numeroCarteirinha"
+          maxlength="20"
+          required
+        />
+      </div>
+
+      <div class="form-group">
+        <label for="validadeCarteirinha">{{ labels.labelValidadeCarteirinha }}</label>
+        <input
+          type="month"
+          id="validadeCarteirinha"
+          name="validadeCarteirinha"
+          [(ngModel)]="registroAtual.validadeCarteirinha"
+          [min]="dataMinima"
+          required
+        />
       </div>
 
       <div class="form-buttons">
@@ -196,6 +223,8 @@
           <th>{{ labels.colunaSobrenome }}</th>
           <th>{{ labels.colunaEmail }}</th>
           <th>{{ labels.colunaConvenio }}</th>
+          <th>{{ labels.colunaNumeroCarteirinha }}</th>
+          <th>{{ labels.colunaValidadeCarteirinha }}</th>
           <th>{{ labels.colunaAcoes }}</th>
         </tr>
       </thead>
@@ -206,6 +235,8 @@
           <td>{{ item.sobrenome }}</td>
           <td>{{ item.email }}</td>
           <td>{{ item.convenio }}</td>
+          <td>{{ item.numeroCarteirinha }}</td>
+          <td>{{ item.validadeCarteirinha | date:'MM/yyyy' }}</td>
           <td>
             <button class="btn-editar" (click)="editar(item)">
               {{ labels.btnEditar }}

@@ -12,8 +12,8 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace BancoDeDados.Migrations
 {
     [DbContext(typeof(PacientesDbContext))]
-    [Migration("20251112213813_PopularDados")]
-    partial class PopularDados
+    [Migration("20251115140057_PopularTabelas")]
+    partial class PopularTabelas
     {
         /// <inheritdoc />
         protected override void BuildTargetModel(ModelBuilder modelBuilder)

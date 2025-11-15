@@ -3,7 +3,7 @@ using Microsoft.EntityFrameworkCore.Design;
 
 namespace BancoDeDados;
 
-public class PacientesDbContextFactory : IDesignTimeDbContextFactory<PacientesDbContext>
+public sealed class PacientesDbContextFactory : IDesignTimeDbContextFactory<PacientesDbContext>
 {
     public PacientesDbContext CreateDbContext(string[] args)
     {

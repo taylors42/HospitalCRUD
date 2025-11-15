@@ -2,11 +2,12 @@ import { Component, OnInit } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { Crud } from '../crud';
+import { NgxMaskDirective } from 'ngx-mask';
 import { Entidade, Convenio, LABELS, MENSAGENS, CreatePacienteDTO, UpdatePacienteDTO } from '../config';
 
 @Component({
   selector: 'app-pacientes',
-  imports: [CommonModule, FormsModule],
+  imports: [CommonModule, FormsModule, NgxMaskDirective],
   templateUrl: './pacientes.html',
   styleUrl: './pacientes.css',
 })
@@ -18,6 +19,12 @@ export class Pacientes implements OnInit {
   labels = LABELS;
   mensagens = MENSAGENS;
   dataMaxima = new Date().toISOString().split('T')[0];
+  dataMinima = (() => {
+    const hoje = new Date();
+    const ano = hoje.getFullYear();
+    const mes = (hoje.getMonth() + 1).toString().padStart(2, '0');
+    return `${ano}-${mes}`;
+  })();
 
   constructor(private crudService: Crud) {}
 
@@ -29,6 +36,8 @@ export class Pacientes implements OnInit {
   carregarDados(): void {
     this.crudService.getAll().subscribe({
       next: (dados) => {
+        console.log('Pacientes carregados:', dados);
+        console.log('Primeiro paciente (se houver):', dados[0]);
         this.lista = dados;
       },
       error: (erro) => {
@@ -111,33 +120,33 @@ export class Pacientes implements OnInit {
     });
   }
 
+  private formatMonthYearToDateTime(monthYear: string | undefined): string | undefined {
+    if (!monthYear) {
+      return undefined;
+    }
+    // Adiciona o dia '01' para formar uma data completa e garantir que o backend possa parsear
+    return `${monthYear}-01`;
+  }
+
   salvar(): void {
     if (this.isEditando && this.registroAtual.key) {
       const { key, ...resto } = this.registroAtual;
 
-      console.log('registroAtual completo:', this.registroAtual);
-      console.log('resto:', resto);
-
-      // Garante que a data esteja no formato correto YYYY-MM-DD
-      const dataFormatada = resto.dataDeNascimento ?
-        resto.dataDeNascimento.split('T')[0] : resto.dataDeNascimento;
-
       const dadosAtualizacao: UpdatePacienteDTO = {
         nome: resto.nome,
         sobrenome: resto.sobrenome,
-        dataDeNascimento: dataFormatada,
+        dataDeNascimento: resto.dataDeNascimento,
         genero: resto.genero,
         email: resto.email,
-        convenio: (resto.convenio && resto.convenio !== '') ? String(resto.convenio) : undefined,
-        celular: (resto.celular && resto.celular.trim() !== '') ? resto.celular.replace(/\D/g, '') : undefined,
-        telefoneFixo: (resto.telefoneFixo && resto.telefoneFixo.trim() !== '') ? resto.telefoneFixo.replace(/\D/g, '') : undefined
+        convenio: String(resto.convenio),
+        numeroCarteirinha: resto.numeroCarteirinha,
+        validadeCarteirinha: this.formatMonthYearToDateTime(resto.validadeCarteirinha),
+        celular: resto.celular,
+        telefoneFixo: resto.telefoneFixo
       };
 
-      console.log('dadosAtualizacao:', dadosAtualizacao);
-      // Nota: RG, RGUF e CPF não são enviados no update pois não podem ser alterados
       this.crudService.update(key, dadosAtualizacao).subscribe({
         next: (resposta: any) => {
-          console.log('Resposta atualização:', resposta);
           alert(resposta?.mensagem || this.mensagens.atualizado);
           this.carregarDados();
           this.cancelar();
@@ -145,67 +154,8 @@ export class Pacientes implements OnInit {
         error: (erro) => {
           console.error('=== ERRO AO ATUALIZAR PACIENTE ===');
           console.error('Erro completo:', erro);
-          console.error('Status HTTP:', erro.status);
-          console.error('Status Text:', erro.statusText);
           console.error('Corpo do erro (erro.error):', erro.error);
-          console.error('Tipo do erro.error:', typeof erro.error);
-          console.error('JSON do erro completo:', JSON.stringify(erro, null, 2));
-          if (erro.error) {
-            console.error('JSON do erro.error:', JSON.stringify(erro.error, null, 2));
-          }
-          console.error('===================================');
-
-          let mensagemErro = '';
-          let detalhesAdicionais = '';
-
-          // Verifica se é erro de RG duplicado
-          if (typeof erro.error === 'string' && erro.error.includes('IX_Pacientes_RG')) {
-            mensagemErro = 'Já existe um paciente cadastrado com este RG. Por favor, verifique o número digitado.';
-          }
-          // Verifica se é erro de CPF duplicado
-          else if (typeof erro.error === 'string' && erro.error.includes('IX_Pacientes_CPF')) {
-            mensagemErro = 'Já existe um paciente cadastrado com este CPF. Por favor, verifique o número digitado.';
-          }
-          // Verifica se é erro de Email duplicado
-          else if (typeof erro.error === 'string' && erro.error.includes('IX_Pacientes_Email')) {
-            mensagemErro = 'Já existe um paciente cadastrado com este Email. Por favor, verifique o email digitado.';
-          }
-          // Tenta pegar mensagem da API de várias formas possíveis
-          else if (erro.error?.mensagem) {
-            mensagemErro = erro.error.mensagem;
-          } else if (erro.error?.message) {
-            mensagemErro = erro.error.message;
-          } else if (erro.error?.title) {
-            mensagemErro = erro.error.title;
-          } else if (typeof erro.error === 'string') {
-            mensagemErro = erro.error;
-          } else if (erro.message) {
-            mensagemErro = erro.message;
-          } else {
-            mensagemErro = this.mensagens.erroAtualizar;
-          }
-
-          // Adiciona detalhes do status HTTP
-          if (erro.status) {
-            detalhesAdicionais = `\n\nStatus HTTP: ${erro.status}`;
-            if (erro.statusText) {
-              detalhesAdicionais += ` - ${erro.statusText}`;
-            }
-          }
-
-          // Adiciona detalhes extras se existirem
-          if (erro.error?.errors) {
-            detalhesAdicionais += '\n\nDetalhes: ' + JSON.stringify(erro.error.errors, null, 2);
-          }
-
-          // Se a mensagem ainda estiver vazia, mostra o objeto todo
-          if (!mensagemErro || mensagemErro === this.mensagens.erroAtualizar) {
-            if (erro.error && typeof erro.error === 'object') {
-              detalhesAdicionais += '\n\nResposta da API:\n' + JSON.stringify(erro.error, null, 2);
-            }
-          }
-
-          alert(mensagemErro + detalhesAdicionais);
+          alert(erro.error?.mensagem || erro.error?.title || this.mensagens.erroAtualizar);
           this.carregarDados();
         },
       });
@@ -219,13 +169,14 @@ export class Pacientes implements OnInit {
         rguf: this.registroAtual.rguf,
         email: this.registroAtual.email,
         convenio: String(this.registroAtual.convenio),
-        ...(this.registroAtual.cpf && { cpf: this.registroAtual.cpf.replace(/\D/g, '') }),
-        ...(this.registroAtual.celular && { celular: this.registroAtual.celular.replace(/\D/g, '') }),
-        ...(this.registroAtual.telefoneFixo && { telefoneFixo: this.registroAtual.telefoneFixo.replace(/\D/g, '') })
+        numeroCarteirinha: this.registroAtual.numeroCarteirinha,
+        validadeCarteirinha: this.formatMonthYearToDateTime(this.registroAtual.validadeCarteirinha) || '',
+        cpf: this.registroAtual.cpf?.replace(/\D/g, ''),
+        celular: this.registroAtual.celular?.replace(/\D/g, ''),
+        telefoneFixo: this.registroAtual.telefoneFixo?.replace(/\D/g, '')
       };
       this.crudService.create(dadosCriacao).subscribe({
         next: (resposta: any) => {
-          console.log('Resposta criação:', resposta);
           alert(resposta?.mensagem || this.mensagens.criado);
           this.carregarDados();
           this.cancelar();
@@ -233,67 +184,8 @@ export class Pacientes implements OnInit {
         error: (erro) => {
           console.error('=== ERRO AO CRIAR PACIENTE ===');
           console.error('Erro completo:', erro);
-          console.error('Status HTTP:', erro.status);
-          console.error('Status Text:', erro.statusText);
           console.error('Corpo do erro (erro.error):', erro.error);
-          console.error('Tipo do erro.error:', typeof erro.error);
-          console.error('JSON do erro completo:', JSON.stringify(erro, null, 2));
-          if (erro.error) {
-            console.error('JSON do erro.error:', JSON.stringify(erro.error, null, 2));
-          }
-          console.error('===================================');
-
-          let mensagemErro = '';
-          let detalhesAdicionais = '';
-
-          // Verifica se é erro de RG duplicado
-          if (typeof erro.error === 'string' && erro.error.includes('IX_Pacientes_RG')) {
-            mensagemErro = 'Já existe um paciente cadastrado com este RG. Por favor, verifique o número digitado.';
-          }
-          // Verifica se é erro de CPF duplicado
-          else if (typeof erro.error === 'string' && erro.error.includes('IX_Pacientes_CPF')) {
-            mensagemErro = 'Já existe um paciente cadastrado com este CPF. Por favor, verifique o número digitado.';
-          }
-          // Verifica se é erro de Email duplicado
-          else if (typeof erro.error === 'string' && erro.error.includes('IX_Pacientes_Email')) {
-            mensagemErro = 'Já existe um paciente cadastrado com este Email. Por favor, verifique o email digitado.';
-          }
-          // Tenta pegar mensagem da API de várias formas possíveis
-          else if (erro.error?.mensagem) {
-            mensagemErro = erro.error.mensagem;
-          } else if (erro.error?.message) {
-            mensagemErro = erro.error.message;
-          } else if (erro.error?.title) {
-            mensagemErro = erro.error.title;
-          } else if (typeof erro.error === 'string') {
-            mensagemErro = erro.error;
-          } else if (erro.message) {
-            mensagemErro = erro.message;
-          } else {
-            mensagemErro = this.mensagens.erroCriar;
-          }
-
-          // Adiciona detalhes do status HTTP
-          if (erro.status) {
-            detalhesAdicionais = `\n\nStatus HTTP: ${erro.status}`;
-            if (erro.statusText) {
-              detalhesAdicionais += ` - ${erro.statusText}`;
-            }
-          }
-
-          // Adiciona detalhes extras se existirem
-          if (erro.error?.errors) {
-            detalhesAdicionais += '\n\nDetalhes: ' + JSON.stringify(erro.error.errors, null, 2);
-          }
-
-          // Se a mensagem ainda estiver vazia, mostra o objeto todo
-          if (!mensagemErro || mensagemErro === this.mensagens.erroCriar) {
-            if (erro.error && typeof erro.error === 'object') {
-              detalhesAdicionais += '\n\nResposta da API:\n' + JSON.stringify(erro.error, null, 2);
-            }
-          }
-
-          alert(mensagemErro + detalhesAdicionais);
+          alert(erro.error?.mensagem || erro.error?.title || this.mensagens.erroCriar);
           this.carregarDados();
         },
       });
@@ -307,6 +199,11 @@ export class Pacientes implements OnInit {
     if (this.registroAtual.dataDeNascimento) {
       // Remove a parte do horário se existir (ex: "2000-01-15T00:00:00" -> "2000-01-15")
       this.registroAtual.dataDeNascimento = this.registroAtual.dataDeNascimento.split('T')[0];
+    }
+
+    // Formatar data de validade da carteirinha para o formato YYYY-MM
+    if (this.registroAtual.validadeCarteirinha) {
+      this.registroAtual.validadeCarteirinha = this.registroAtual.validadeCarteirinha.substring(0, 7);
     }
 
     // Garantir que o convênio seja sempre o ID correto
@@ -420,6 +317,8 @@ export class Pacientes implements OnInit {
       celular: '',
       telefoneFixo: '',
       convenio: '',
+      numeroCarteirinha: '',
+      validadeCarteirinha: '',
     };
   }
 

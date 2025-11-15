@@ -21,4 +21,8 @@ public sealed class CreatePacienteDTo
     public string? TelefoneFixo { get; set; }
     [Required]
     public int Convenio { get; set; }
+    [Required]
+    public string NumeroCarteirinha { get; set; }
+    [Required]
+    public DateTime ValidadeCarteirinha { get; set; }
 }

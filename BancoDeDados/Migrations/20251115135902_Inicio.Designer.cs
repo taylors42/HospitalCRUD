@@ -12,8 +12,8 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace BancoDeDados.Migrations
 {
     [DbContext(typeof(PacientesDbContext))]
-    [Migration("20251112213610_PrimeiraMigration")]
-    partial class PrimeiraMigration
+    [Migration("20251115135902_Inicio")]
+    partial class Inicio
     {
         /// <inheritdoc />
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
