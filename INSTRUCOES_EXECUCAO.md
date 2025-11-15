@@ -96,3 +96,32 @@ Com o banco de dados configurado, você pode iniciar o backend e o frontend. **�
 6.  **Acessar a Aplicação:** Abrir `http://localhost:4200` no navegador.
 
 Com estes passos, o ambiente de desenvolvimento estará totalmente configurado e a aplicação pronta para uso.
+
+---
+
+## 6. Arquitetura da Aplicação
+
+A aplicação utiliza uma arquitetura cliente-servidor em camadas, uma abordagem moderna e robusta que promove a separação de responsabilidades.
+
+### **Frontend (Cliente)**
+
+- **Tecnologia:** Angular com TypeScript.
+- **Estrutura:**
+    - **Componentes (`pacientes.ts`):** Responsáveis por gerenciar a interface do usuário (UI) e a interação. O `Pacientes` component controla o formulário de cadastro e a lista de pacientes.
+    - **Serviços (`crud.ts`):** Abstraem a comunicação com o backend. O serviço `Crud` utiliza o `HttpClient` do Angular para realizar requisições HTTP (GET, POST, PATCH, DELETE) para a API .NET.
+    - **Comunicação:** A comunicação com o backend é assíncrona, baseada em JSON sobre HTTP. O frontend envia DTOs (Data Transfer Objects) em formato JSON e processa as respostas da API.
+
+### **Backend (Servidor)**
+
+- **Tecnologia:** API RESTful com .NET 9 e C#.
+- **Arquitetura em Camadas (N-Tier):**
+    - **Camada de Apresentação (Controllers):** O projeto `PacientesAPI` expõe os endpoints da API através de `Controllers` (ex: `PacienteController`). Esta camada é a porta de entrada das requisições HTTP, delegando a execução para a camada de serviço.
+    - **Camada de Serviço (Lógica de Negócio):** Localizada em `PacientesAPI/Services` (ex: `PacienteService`), contém a lógica de negócio central da aplicação, como validações e orquestração de operações.
+    - **Camada de Acesso a Dados (Repository):** Implementa o **Repository Pattern** em `PacientesAPI/Repository` (ex: `PacienteRepository`). Abstrai a lógica de acesso ao banco de dados e implementa o padrão **Soft Delete**.
+    - **Camada de Persistência (ORM):** O projeto `BancoDeDados` utiliza o **Entity Framework Core (EF Core)** para traduzir objetos C# em operações de banco de dados.
+    - **Modelos de Domínio:** O projeto `Models` contém as classes C# (`Paciente`, `Convenio`) que representam as entidades principais do sistema.
+
+### **Banco de Dados**
+
+- **Tecnologia:** SQL Server.
+- **Gerenciamento:** O esquema do banco de dados (tabelas, colunas, etc.) é totalmente gerenciado pelo Entity Framework Core através de migrations.
